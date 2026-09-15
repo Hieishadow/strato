@@ -16,22 +16,13 @@ jobs:
 
       - name: Restore src from STORM_SWITCH with NVDEC fix
         run: |
-          rm -rf src
-          git clone --depth 1 https://github.com/ReiKatari/STORM_SWITCH.git /tmp/storm
-          mv /tmp/storm/src ./src
-          rm -rf /tmp/storm
-          ls src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
-
-          # FIX #18 - Shader STUBBED real (STORM não tem a pasta)
-          echo "--- video_core antes ---"
-          ls src/video_core/
-          rm -rf src/video_core/shader_recompiler
-          git clone --depth 1 https://github.com/eden-emulator/Rei.git /tmp/eden
-          cp -r /tmp/eden/src/video_core/shader_recompiler ./src/video_core/shader_recompiler
-          rm -rf /tmp/eden
-          echo "add_subdirectory(shader_recompiler)" >> src/video_core/CMakeLists.txt
-          echo "--- video_core depois ---"
-          ls src/video_core/shader_recompiler | head -20
+          # FIX #19 - limpa sujeira + só pega NVDEC
+          git checkout -- src/
+          git clean -fd src/
+          mkdir -p src/core/hle/service/nvdrv/devices/
+          curl -L https://raw.githubusercontent.com/ReiKatari/STORM_SWITCH/master/src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp -o src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
+          ls -lh src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
+          echo "--- video_core original mantido ---"
           cat src/video_core/CMakeLists.txt | grep shader_recompiler
 
       - name: Restore CCache
