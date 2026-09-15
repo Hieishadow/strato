@@ -173,18 +173,23 @@ interface GpuDriverHelper {
                 return GpuDriverInstallResult.UnsupportedAndroidVersion
             }
 
-            // Check that the driver is not already installed
+            // Check that the driver is not already installed - FIX: sobrescreve no 865
             val installedDrivers = getInstalledDrivers(context)
             val finalInstallDir = File(getDriversDirectory(context), driverMetadata.label)
-            if (installedDrivers[finalInstallDir] != null) {
-                cleanup()
-                return GpuDriverInstallResult.AlreadyInstalled
+            if (installedDrivers[finalInstallDir]!= null) {
+                finalInstallDir.deleteRecursively()
             }
 
             // Move the driver files to the final location
             if (!unpackDir.renameTo(finalInstallDir)) {
-                cleanup()
-                throw IOException("Failed to create directory ${finalInstallDir.name}")
+                // Tenta copiar se rename falhar (Android 13+)
+                try {
+                    unpackDir.copyRecursively(finalInstallDir, overwrite = true)
+                    unpackDir.deleteRecursively()
+                } catch (e: Exception) {
+                    cleanup()
+                    throw IOException("Failed to create directory ${finalInstallDir.name}: ${e.message}")
+                }
             }
 
             return GpuDriverInstallResult.Success
