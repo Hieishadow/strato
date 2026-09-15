@@ -102,10 +102,10 @@
         <item>0.75x (recomendado - low RAM)</item>
         <item>1x (original)</item>
     </string-array>
-    <string-array name="resolution_values">
+        <string-array name="resolution_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
-</resources></resources>
+</resources>
