@@ -102,10 +102,16 @@
         <org.stratoemu.strato.preference.GpuDriverPreference
             app:key="gpu_driver"
             app:title="@string/gpu_driver_config" />
+        <org.stratoemu.strato.preference.IntegerListPreference
+            android:defaultValue="2"
+            android:entries="@array/resolution_entries"
+            android:entryValues="@array/resolution_values"
+            app:key="resolution_scale"
+            app:title="Resolution (0.75x = low RAM)"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:summaryOff="@string/triple_buffering_disabled"
-            android:summaryOn="@string/triple_buffering_enabled"
             app:key="force_triple_buffering"
             app:title="@string/force_triple_buffering" />
         <SwitchPreferenceCompat
