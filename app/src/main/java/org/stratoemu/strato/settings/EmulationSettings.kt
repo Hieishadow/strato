@@ -42,6 +42,7 @@ class EmulationSettings private constructor(context : Context, prefName : String
     var respectDisplayCutout by sharedPreferences(context, false, prefName = prefName)
     var enableFoldableLayout by sharedPreferences(context, false, prefName = prefName)
     var showPauseButton by sharedPreferences(context, false, prefName = prefName)
+    var resolutionScale by sharedPreferences(context, 2, prefName = prefName)
 
     // GPU
     var gpuDriver by sharedPreferences(context, SYSTEM_GPU_DRIVER, prefName = prefName)
