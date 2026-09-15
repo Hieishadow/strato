@@ -16,14 +16,12 @@ jobs:
 
       - name: Restore src from STORM_SWITCH with NVDEC fix
         run: |
-          # FIX #19 - limpa sujeira + só pega NVDEC
-          git checkout -- src/
-          git clean -fd src/
+          # FIX #19b - só pega NVDEC, sem git checkout
           mkdir -p src/core/hle/service/nvdrv/devices/
           curl -L https://raw.githubusercontent.com/ReiKatari/STORM_SWITCH/master/src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp -o src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
           ls -lh src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
           echo "--- video_core original mantido ---"
-          cat src/video_core/CMakeLists.txt | grep shader_recompiler
+          ls src/video_core/ | grep shader
 
       - name: Restore CCache
         uses: hendrikmuhs/ccache-action@v1.2
