@@ -14,11 +14,19 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Restore src from STORM_SWITCH with NVDEC fix
+        run: |
+          rm -rf src
+          git clone --depth 1 https://github.com/ReiKatari/STORM_SWITCH.git /tmp/storm
+          mv /tmp/storm/src ./src
+          rm -rf /tmp/storm
+          ls src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
+
       - name: Restore CCache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           max-size: 3Gi
-
+          
       - name: Restore Gradle Cache
         uses: actions/cache@v4
         with:
