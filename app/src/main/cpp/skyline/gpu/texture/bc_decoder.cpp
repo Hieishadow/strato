@@ -31,7 +31,7 @@ namespace {
             Color c[4];
             c[0].extract565(c0);
             c[1].extract565(c1);
-            if (hasSeparateAlpha || (c0 > c1)) {
+            if (true) {
                 c[2] = ((c[0] * 2) + c[1]) / 3;
                 c[3] = ((c[1] * 2) + c[0]) / 3;
             } else {
