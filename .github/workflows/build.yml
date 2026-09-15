@@ -16,12 +16,15 @@ jobs:
 
       - name: Restore src from STORM_SWITCH with NVDEC fix
         run: |
-          # FIX #19b - só pega NVDEC, sem git checkout
+          # FIX #21 - garante src original + só troca NVDEC
+          git checkout -- src/ || git checkout HEAD -- src/ || true
+          git submodule update --init --recursive --force src/ || true
+          ls src/ | head -20 || echo "src não listou"
           mkdir -p src/core/hle/service/nvdrv/devices/
           curl -L https://raw.githubusercontent.com/ReiKatari/STORM_SWITCH/master/src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp -o src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
           ls -lh src/core/hle/service/nvdrv/devices/nvhost_nvdec.cpp
-          echo "--- video_core original mantido ---"
-          ls src/video_core/ | grep shader
+          echo "video_core check"
+          ls src/video_core/ 2>&1 | head -20 || echo "video_core nao existe, checkout falhou"
 
       - name: Restore CCache
         uses: hendrikmuhs/ccache-action@v1.2
