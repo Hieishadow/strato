@@ -198,17 +198,25 @@ interface GpuDriverHelper {
         /**
          * Retrieves the library name from the driver metadata for the given driver.
          */
-        fun getLibraryName(context : Context, driverLabel : String) : String {
+                fun getLibraryName(context : Context, driverLabel : String) : String {
             val driverDir = File(getDriversDirectory(context), driverLabel)
             val metadataFile = File(driverDir, GPU_DRIVER_META_FILE)
-            return try {
-                GpuDriverMetadata.deserialize(metadataFile).libraryName
-            } catch (e : SerializationException) {
-                Log.w(TAG, "Failed to load library name for driver ${driverLabel}, driver may not exist or have invalid metadata")
-                ""
+            try {
+                val meta = GpuDriverMetadata.deserialize(metadataFile)
+                if (meta.libraryName.isNotEmpty()) {
+                    return meta.libraryName
+                }
+            } catch (e : Exception) {
+                Log.w(TAG, "meta.json falhou, procurando .so manual")
             }
-        }
-
+            driverDir.listFiles()?.forEach { file ->
+                if (file.name.endsWith(".so")) return file.name
+                file.listFiles()?.forEach { sub ->
+                    if (sub.name.endsWith(".so")) return sub.name
+                }
+            }
+            return ""
+                }
         fun ensureFileRedirectDir(context : Context) {
             File(context.getPublicFilesDir(), GPU_DRIVER_FILE_REDIRECT_DIR).apply {
                 if (!isDirectory) {
