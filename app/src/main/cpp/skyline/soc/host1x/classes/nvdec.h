@@ -1,12 +1,14 @@
-#pragma once
-#include <common.h>
+// SPDX-License-Identifier: MPL-2.0
+#include "nvdec.h"
+#include "logger.h"
 
 namespace skyline::soc::host1x {
-    class NvDecClass {
-      private:
-        std::function<void()> opDoneCallback;
-      public:
-        NvDecClass(std::function<void()> opDoneCallback);
-        void CallMethod(u32 method, u32 argument);
-    };
+    NvDecClass::NvDecClass(std::function<void()> opDoneCallback)
+        : opDoneCallback(std::move(opDoneCallback)) {}
+
+    void NvDecClass::CallMethod(u32 method, u32 argument) {
+        // S20 FE 865 - pula cutscene preta
+        if (opDoneCallback)
+            opDoneCallback();
+    }
 }
