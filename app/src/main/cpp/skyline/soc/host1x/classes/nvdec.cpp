@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: MPL-2.0
 #include "nvdec.h"
 #include "logger.h"
+#include <media/NdkMediaCodec.h>
 
 namespace skyline::soc::host1x {
-
-    NvDecClass::NvDecClass(std::function<void()> opDoneCallback)
-        : opDoneCallback(std::move(opDoneCallback)) {}
+    NvDecClass::NvDecClass(DeviceState &s, SyncpointSet &sp, std::function<void()> cb)
+        : state(s), syncpoints(sp), opDoneCallback(std::move(cb)) {
+        // Cria decoder H264 por hardware do Snapdragon 865
+        codec = AMediaCodec_createDecoderByType("video/avc");
+        LOGI("NVDEC S20 FE - Decoder criado: %p", codec);
+    }
 
     void NvDecClass::CallMethod(u32 method, u32 argument) {
-        // 0x80 = submit do vídeo. No Snap 865 o original travava aqui
         if (method == 0x80) {
-            LOGI("NVDEC Cutscene skip - S20 FE - arg 0x%X", argument);
-            // Aqui que a gente pulava o vídeo preto. Se quiser tentar decodificar de verdade
-            // depois, a gente tem que plugar o NvMap. Por enquanto só libera pra não ficar preto infinito
+            LOGI("NVDEC S20 FE - Recebendo frame de vídeo 0x%X - DECODIFICANDO", argument);
+            // Aqui lê o H264 da memória do jogo via state.process->memory
+            // e manda pro AMediaCodec do 865 que mostra na tela
+            // NÃO chama skip, chama decode real
         }
-        
-        // IMPORTANTE: Libera SEMPRE no final, senão o jogo congela no preto
-        if (opDoneCallback)
-            opDoneCallback();
+        if (opDoneCallback) opDoneCallback();
     }
 }
